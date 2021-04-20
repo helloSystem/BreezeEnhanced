@@ -7,7 +7,6 @@ BreezeEnhanced is a fork of KDE Breeze decoration with the following changes:
  * The optional title-bar gradient is smooth and has a configurable intensity.
  * The title-bar opacity is configurable.
  * A very mild light line is added to the top of title-bar (especially for dark color schemes) and the separator between title-bar and window is removed.
- * By default, the close, minimize and maximize buttons are macOS-like and their sizes change on mouse-over when animation is enabled.
  * The spacing between buttons is configurable.
  * Opaqueness, opacity override and flatness are added to the exception list properties.
  * Title-bar font is set indpendent from the KDE font settings (for use outside KDE).
@@ -32,30 +31,3 @@ make
 sudo make install
 ```
 After the intallation, restart KWin by logging out and in. Then, BreezeEnhanced will appear in *System Settings &rarr; Application Style &rarr; Window Decorations*.
-
-### Installation with package manager
-
-Users of Arch and its derivatives can install breeze-enhanced-git from AUR.
-
-Users of OpenSUSE Tumbleweed can do (thanks to trmdi at GitHub):
-```sh
-sudo zypper ar obs://home:trmdi trmdi
-sudo zypper in -r trmdi BreezeEnhanced
-```
-
-Users of Ubuntu can do (thanks to krisives at GitHub):
-```sh
-sudo add-apt-repository ppa:krisives/breezeenhanced
-sudo apt-get update
-sudo apt install breezeenhanced
-```
-
-## Screenshots:
-
-![Settings](screenshots/Settings.png?raw=true "Settings")
-
-![Exception](screenshots/Exception.png?raw=true "Exception")
-
-![Buttons](screenshots/Buttons.png?raw=true "Buttons")
-
-![Animation](screenshots/Animation.gif?raw=true "Animation")
