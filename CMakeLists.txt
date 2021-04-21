@@ -1,4 +1,5 @@
-set(project(breezeenhanced))
+
+project(breezeenhanced)
 set(PROJECT_VERSION "0.1")
 set(PROJECT_VERSION_MAJOR 0)
 
@@ -88,7 +89,7 @@ set(breezeenhanced_config_PART_FORMS
    config/ui/breezeexceptionlistwidget.ui
 )
 
-#ki18n_wrap_ui(breezeenhanced_config_PART_FORMS_HEADERS ${breezeenhanced_config_PART_FORMS})
+ki18n_wrap_ui(breezeenhanced_config_PART_FORMS_HEADERS ${breezeenhanced_config_PART_FORMS})
 
 ### build library
 add_library(breezeenhanced MODULE
