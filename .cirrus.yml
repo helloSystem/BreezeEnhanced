@@ -10,7 +10,7 @@ task:
   name: freebsd-12-1-release-amd64
   stateful: false
   setup_script:
-    - pkg install -y curl wget zip cmake pkgconf kf5-extra-cmake-modules devel/kf5-kcoreaddons x11-toolkits/kf5-kguiaddons kf5-kconfigwidgets plasma5-kdecoration qt5-core qt5-x11extras qt5-widgets qt5-qmake qt5-buildtools qt5-linguisttools
+    - pkg install -y curl wget zip cmake pkgconf kf5-kwindowsystem kf5-extra-cmake-modules devel/kf5-kcoreaddons x11-toolkits/kf5-kguiaddons kf5-kconfigwidgets plasma5-kdecoration qt5-core qt5-x11extras qt5-widgets qt5-qmake qt5-buildtools qt5-linguisttools
   test_script:
     - mkdir build && cd build
     - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
