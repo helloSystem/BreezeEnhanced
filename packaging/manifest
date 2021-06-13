@@ -1,6 +1,6 @@
 cat << EOF
 name:          breezeenhanced
-version:       0.1
+version:       0.1.0
 origin:        helloSystem
 comment:       Fork of the KDE Breeze decoration with more configurability
 arch:          freebsd:12:x86:64
