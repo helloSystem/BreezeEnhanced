@@ -15,8 +15,12 @@ task:
     - mkdir build && cd build
     - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
     - make -j$(sysctl -n hw.ncpu)
-    - sudo make install
-    - echo "TODO: Make pkg"
+    # sudo make install
+    - mkdir -p files
+    - make DESTDIR=files install ; find files
+    - wget "https://raw.githubusercontent.com/helloSystem/ISO/experimental/scripts/build-pkg.sh"
+    - sh -ex ./build-pkg.sh -m  ../../packaging/manifest -d ./files
+    - ls
     # https://github.com/helloSystem/ISO/blob/f6b78eee762838886ae8f588dcd349a03c7afdde/build.sh#L303
     #
     # find .
