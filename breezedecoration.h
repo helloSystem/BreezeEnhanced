@@ -58,6 +58,9 @@ namespace Breeze
         //* paint
         void paint(QPainter *painter, const QRect &repaintRegion) override;
 
+        //* probonopd: Factor for scaling all rendered UI elements
+        float scaleFactor() const;
+
         //* internal settings
         InternalSettingsPtr internalSettings() const
         { return m_internalSettings; }

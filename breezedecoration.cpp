@@ -46,6 +46,9 @@
 #include <QTimer>
 #include <QVariantAnimation>
 
+#include <QProcessEnvironment>
+#include <QDebug>
+ 
 #if BREEZE_HAVE_X11
 #include <QX11Info>
 #endif
@@ -155,6 +158,7 @@ namespace Breeze
     static int g_shadowStrength = 255;
     static QColor g_shadowColor = Qt::black;
     static QSharedPointer<KDecoration2::DecorationShadow> g_sShadow;
+    float scaleFactor;
 
     //________________________________________________________________
     Decoration::Decoration(QObject *parent, const QVariantList &args)
@@ -174,6 +178,24 @@ namespace Breeze
         }
 
         deleteSizeGrip();
+
+    }
+
+    //________________________________________________________________
+    float Decoration::scaleFactor() const
+    {
+
+        // probonopd: Allow using BREEZE_SCALE_FACTOR
+        float scalefactor = 1.0;
+        // qDebug() << QProcess::systemEnvironment();
+        if(getenv("BREEZE_SCALE_FACTOR")) {
+            // qDebug() << "Using BREEZE_SCALE_FACTOR as scaleFactor";
+            QString floatString = qgetenv("BREEZE_SCALE_FACTOR");
+            QTextStream floatTextStream(&floatString);
+            floatTextStream >> scalefactor;
+        }
+        // qDebug() << "Using scaleFactor" << scalefactor;
+        return scalefactor;
 
     }
 
@@ -403,9 +425,7 @@ namespace Breeze
         int top = 0;
         if( hideTitleBar() ) top = bottom;
         else {
-
-            top = 22; // probono: Absolute height of the title bar in pixels
-
+            top = 22 * this->scaleFactor(); // probono: Absolute height of the title bar in pixels
         }
 
         setBorders(QMargins(left, top, right, bottom));
@@ -446,9 +466,9 @@ namespace Breeze
         const auto s = settings();
 
         // adjust button position
-        const int bHeight = captionHeight() + (isTopEdge() ? Metrics::TitleBar_TopMargin:0);
-        const int bWidth = buttonHeight();
-        const int verticalOffset = (isTopEdge() ? Metrics::TitleBar_TopMargin:0) + (captionHeight()-buttonHeight())/2;
+        const int bHeight = (captionHeight() + (isTopEdge() ? Metrics::TitleBar_TopMargin:0)) * this->scaleFactor();
+        const int bWidth = buttonHeight() * this->scaleFactor();
+        const int verticalOffset = ((isTopEdge() ? Metrics::TitleBar_TopMargin:0) + (captionHeight()-buttonHeight())/2)/(this->scaleFactor()*1.6); // prononopd: FIXME: 1.6 was trial and error
         foreach( const QPointer<KDecoration2::DecorationButton>& button, m_leftButtons->buttons() + m_rightButtons->buttons() )
         {
             button.data()->setGeometry( QRectF( QPoint( 0, 0 ), QSizeF( bWidth, bHeight ) ) );
@@ -461,11 +481,11 @@ namespace Breeze
         {
 
             // spacing (use our own spacing instead of Metrics::TitleBar_ButtonSpacing)
-            m_leftButtons->setSpacing(m_internalSettings->buttonSpacing());
+            m_leftButtons->setSpacing(m_internalSettings->buttonSpacing()*this->scaleFactor());
 
             // padding
-            const int vPadding = isTopEdge() ? 0 : Metrics::TitleBar_TopMargin+1;
-            const int hPadding = Metrics::TitleBar_SideMargin;
+            const int vPadding = isTopEdge() ? 0 : Metrics::TitleBar_TopMargin*this->scaleFactor()+1;
+            const int hPadding = Metrics::TitleBar_SideMargin*this->scaleFactor();
             if( isLeftEdge() )
             {
                 // add offsets on the side buttons, to preserve padding, but satisfy Fitts law
@@ -603,7 +623,7 @@ namespace Breeze
 
         } else if( c->isShaded() ) {
 
-            painter->drawRoundedRect(titleRect, Metrics::Frame_FrameRadius, Metrics::Frame_FrameRadius);
+            painter->drawRoundedRect(titleRect, Metrics::Frame_FrameRadius*this->scaleFactor(), Metrics::Frame_FrameRadius*this->scaleFactor());
 
         } else {
 
@@ -611,11 +631,11 @@ namespace Breeze
 
             // the rect is made a little bit larger to be able to clip away the rounded corners at the bottom and sides
             painter->drawRoundedRect(titleRect.adjusted(
-                isLeftEdge() ? -Metrics::Frame_FrameRadius:0,
-                isTopEdge() ? -Metrics::Frame_FrameRadius:0,
-                isRightEdge() ? Metrics::Frame_FrameRadius:0,
-                Metrics::Frame_FrameRadius),
-                Metrics::Frame_FrameRadius, Metrics::Frame_FrameRadius);
+                isLeftEdge() ? -Metrics::Frame_FrameRadius*this->scaleFactor():0,
+                isTopEdge() ? -Metrics::Frame_FrameRadius*this->scaleFactor():0,
+                isRightEdge() ? Metrics::Frame_FrameRadius*this->scaleFactor():0,
+                Metrics::Frame_FrameRadius*this->scaleFactor()),
+                Metrics::Frame_FrameRadius*this->scaleFactor(), Metrics::Frame_FrameRadius*this->scaleFactor());
 
         }
 
@@ -634,6 +654,7 @@ namespace Breeze
 
         // draw caption
         QFont f; f.fromString(m_internalSettings->titleBarFont());
+        f.setPointSize(f.pointSize()*this->scaleFactor());
         // KDE needs this FIXME: Why?
         QFontDatabase fd; f.setStyleName(fd.styleString(f));
         painter->setFont(f);
@@ -750,18 +771,18 @@ namespace Breeze
                 return c;
             };
 
-            const QSize boxSize = BoxShadowRenderer::calculateMinimumBoxSize(params.shadow1.radius)
-                .expandedTo(BoxShadowRenderer::calculateMinimumBoxSize(params.shadow2.radius));
+            const QSize boxSize = BoxShadowRenderer::calculateMinimumBoxSize(params.shadow1.radius*this->scaleFactor())
+                .expandedTo(BoxShadowRenderer::calculateMinimumBoxSize(params.shadow2.radius*this->scaleFactor()));
 
             BoxShadowRenderer shadowRenderer;
-            shadowRenderer.setBorderRadius(Metrics::Frame_FrameRadius + 0.5);
+            shadowRenderer.setBorderRadius((Metrics::Frame_FrameRadius + 0.5)*this->scaleFactor());
             shadowRenderer.setBoxSize(boxSize);
             shadowRenderer.setDevicePixelRatio(1.0); // TODO: Create HiDPI shadows?
 
             const qreal strength = static_cast<qreal>(g_shadowStrength) / 255.0;
-            shadowRenderer.addShadow(params.shadow1.offset, params.shadow1.radius,
+            shadowRenderer.addShadow(params.shadow1.offset, params.shadow1.radius*this->scaleFactor(),
                 withOpacity(g_shadowColor, params.shadow1.opacity * strength));
-            shadowRenderer.addShadow(params.shadow2.offset, params.shadow2.radius,
+            shadowRenderer.addShadow(params.shadow2.offset, params.shadow2.radius*this->scaleFactor(),
                 withOpacity(g_shadowColor, params.shadow2.opacity * strength));
 
             QImage shadowTexture = shadowRenderer.render();
@@ -787,8 +808,8 @@ namespace Breeze
             painter.setCompositionMode(QPainter::CompositionMode_DestinationOut);
             painter.drawRoundedRect(
                 innerRect,
-                Metrics::Frame_FrameRadius + 0.5,
-                Metrics::Frame_FrameRadius + 0.5);
+                (Metrics::Frame_FrameRadius + 0.5) * this->scaleFactor(),
+                (Metrics::Frame_FrameRadius + 0.5) * this->scaleFactor());
 
             // Draw outline.
             painter.setPen(withOpacity(g_shadowColor, 0.2 * strength));
@@ -796,8 +817,8 @@ namespace Breeze
             painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
             painter.drawRoundedRect(
                 innerRect,
-                Metrics::Frame_FrameRadius - 0.5,
-                Metrics::Frame_FrameRadius - 0.5);
+                (Metrics::Frame_FrameRadius - 0.5) * this->scaleFactor(),
+                (Metrics::Frame_FrameRadius - 0.5) * this->scaleFactor());
 
             painter.end();
 
