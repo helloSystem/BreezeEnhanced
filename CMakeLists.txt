@@ -125,4 +125,5 @@ install(TARGETS breezeenhanced DESTINATION ${PLUGIN_INSTALL_DIR}/org.kde.kdecora
 install(FILES config/breezeenhancedconfig.desktop DESTINATION share/applications)
 # install(TARGETS breezedecoration DESTINATION ${PLUGIN_INSTALL_DIR}/org.kde.kdecoration2)
 # install(FILES config/breezedecorationconfig.desktop DESTINATION  ${SERVICES_INSTALL_DIR})
-install(FILES etc/xdg/kwinrc etc/xdg/breezerc DESTINATION etc/xdg)
+install(FILES etc/xdg/kwinrc DESTINATION etc/xdg)
+install(FILES etc/xdg/breezerc DESTINATION etc/xdg)
