@@ -36,7 +36,8 @@ ShadeHover=true
 ShadeHoverInterval=500
 # Window placement strategy
 Placement=Cascade
-FocusStealingPreventionLevel=1
+# Allow windows to come to the front (e.g., when opening a folder from Menu)
+FocusStealingPreventionLevel=0
 HideUtilityWindowsForInactive=false
 BorderlessMaximizedWindows=false
 
