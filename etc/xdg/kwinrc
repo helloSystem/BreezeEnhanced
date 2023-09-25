@@ -14,14 +14,14 @@ Number=1
 AnimationDuration=350
 
 [Plugins]
-blurEnabled=false
-sheetEnabled=true
-dialogparentEnabled=true
-squashEnabled=true
-kwin4_effect_dialogparentEnabled=false
-kwin4_effect_fadeEnabled=true
-kwin4_effect_squashEnabled=false
-kwin4_effect_translucencyEnabled=false
+# blurEnabled=false
+# sheetEnabled=true
+# dialogparentEnabled=true
+# squashEnabled=true
+# kwin4_effect_dialogparentEnabled=false
+# kwin4_effect_fadeEnabled=true
+# kwin4_effect_squashEnabled=false
+# kwin4_effect_translucencyEnabled=false
 magiclampEnabled=true
 
 [Effect-DesktopGrid]
